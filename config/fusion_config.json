@@ -1,0 +1,129 @@
+{
+  "models": [
+    {
+      "name": "openai_small",
+      "client": "openai",
+      "model": "text-embedding-3-small",
+      "dimension": 1536,
+      "strengths": ["general_text", "documentation", "semantic_search"]
+    },
+    {
+      "name": "openai_large",
+      "client": "openai",
+      "model": "text-embedding-3-large",
+      "dimension": 3072,
+      "strengths": ["high_accuracy", "complex_reasoning"]
+    },
+    {
+      "name": "voyage_code",
+      "client": "voyage",
+      "model": "voyage-code-3",
+      "dimension": 1024,
+      "strengths": ["code", "programming", "technical"]
+    },
+    {
+      "name": "voyage_general",
+      "client": "voyage",
+      "model": "voyage-3",
+      "dimension": 1024,
+      "strengths": ["retrieval", "semantic_search"]
+    },
+    {
+      "name": "cohere_english",
+      "client": "cohere",
+      "model": "embed-english-v3.0",
+      "dimension": 1024,
+      "strengths": ["english_text", "search"]
+    },
+    {
+      "name": "cohere_multilingual",
+      "client": "cohere",
+      "model": "embed-multilingual-v3.0",
+      "dimension": 1024,
+      "strengths": ["multilingual", "translation"]
+    },
+    {
+      "name": "jina_v3",
+      "client": "jina",
+      "model": "jina-embeddings-v3",
+      "dimension": 1024,
+      "strengths": ["long_context", "semantic_search"]
+    },
+    {
+      "name": "huggingface_minilm",
+      "client": "huggingface",
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "dimension": 384,
+      "strengths": ["fast", "lightweight", "sentence_similarity"]
+    },
+    {
+      "name": "huggingface_bge",
+      "client": "huggingface",
+      "model": "BAAI/bge-large-en-v1.5",
+      "dimension": 1024,
+      "strengths": ["high_quality", "retrieval", "english"]
+    }
+  ],
+  "routing": [
+    {
+      "source": "github",
+      "models": ["voyage_code"],
+      "weights": [1.0],
+      "fusion_strategy": "single"
+    },
+    {
+      "source": "gitlab",
+      "models": ["voyage_code"],
+      "weights": [1.0],
+      "fusion_strategy": "single"
+    },
+    {
+      "source": "bitbucket",
+      "models": ["voyage_code"],
+      "weights": [1.0],
+      "fusion_strategy": "single"
+    },
+    {
+      "source": "notion",
+      "models": ["openai_small"],
+      "weights": [1.0],
+      "fusion_strategy": "single"
+    },
+    {
+      "source": "confluence",
+      "models": ["openai_small"],
+      "weights": [1.0],
+      "fusion_strategy": "single"
+    },
+    {
+      "source": "gdrive",
+      "models": ["openai_small"],
+      "weights": [1.0],
+      "fusion_strategy": "single"
+    },
+    {
+      "source": "local",
+      "models": ["openai_small"],
+      "weights": [1.0],
+      "fusion_strategy": "single"
+    },
+    {
+      "source": "code",
+      "models": ["voyage_code", "openai_small"],
+      "weights": [0.7, 0.3],
+      "fusion_strategy": "weighted_average"
+    },
+    {
+      "source": "documentation",
+      "models": ["openai_small", "jina_v3"],
+      "weights": [0.6, 0.4],
+      "fusion_strategy": "weighted_average"
+    }
+  ],
+  "fallback_model": "openai_small",
+  "cache_embeddings": true,
+  "normalize_embeddings": true,
+  "batch_size": 100,
+  "max_retries": 3,
+  "timeout_seconds": 30
+}

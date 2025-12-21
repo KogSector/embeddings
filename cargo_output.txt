@@ -1,0 +1,138 @@
+    Checking embeddings v0.1.0 (C:\Users\risha\Desktop\Work\embeddings)
+warning: unused import: `Deserialize`
+ --> src\clients\huggingface.rs:8:13
+  |
+8 | use serde::{Deserialize, Serialize};
+  |             ^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused import: `tokio::sync::RwLock`
+ --> src\services\orchestrator.rs:8:5
+  |
+8 | use tokio::sync::RwLock;
+  |     ^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `error`
+ --> src\services\orchestrator.rs:9:27
+  |
+9 | use tracing::{info, warn, error};
+  |                           ^^^^^
+
+warning: fields `object` and `model` are never read
+  --> src\clients\openai.rs:29:5
+   |
+28 | struct OpenAIResponse {
+   |        -------------- fields in this struct
+29 |     object: String,
+   |     ^^^^^^
+30 |     data: Vec<OpenAIEmbeddingData>,
+31 |     model: String,
+   |     ^^^^^
+   |
+   = note: `OpenAIResponse` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` on by default
+
+warning: field `object` is never read
+  --> src\clients\openai.rs:37:5
+   |
+36 | struct OpenAIEmbeddingData {
+   |        ------------------- field in this struct
+37 |     object: String,
+   |     ^^^^^^
+   |
+   = note: `OpenAIEmbeddingData` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: fields `id` and `texts` are never read
+  --> src\clients\cohere.rs:40:5
+   |
+39 | struct CohereResponse {
+   |        -------------- fields in this struct
+40 |     id: String,
+   |     ^^
+41 |     embeddings: Vec<Vec<f32>>,
+42 |     texts: Vec<String>,
+   |     ^^^^^
+   |
+   = note: `CohereResponse` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: field `api_version` is never read
+  --> src\clients\cohere.rs:48:5
+   |
+47 | struct CohereMeta {
+   |        ---------- field in this struct
+48 |     api_version: CohereApiVersion,
+   |     ^^^^^^^^^^^
+   |
+   = note: `CohereMeta` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: field `version` is never read
+  --> src\clients\cohere.rs:54:5
+   |
+53 | struct CohereApiVersion {
+   |        ---------------- field in this struct
+54 |     version: String,
+   |     ^^^^^^^
+   |
+   = note: `CohereApiVersion` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: fields `object` and `model` are never read
+  --> src\clients\voyage.rs:31:5
+   |
+30 | struct VoyageResponse {
+   |        -------------- fields in this struct
+31 |     object: String,
+   |     ^^^^^^
+32 |     data: Vec<VoyageEmbeddingData>,
+33 |     model: String,
+   |     ^^^^^
+   |
+   = note: `VoyageResponse` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: field `object` is never read
+  --> src\clients\voyage.rs:39:5
+   |
+38 | struct VoyageEmbeddingData {
+   |        ------------------- field in this struct
+39 |     object: String,
+   |     ^^^^^^
+   |
+   = note: `VoyageEmbeddingData` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: fields `model` and `object` are never read
+  --> src\clients\jina.rs:31:5
+   |
+30 | struct JinaResponse {
+   |        ------------ fields in this struct
+31 |     model: String,
+   |     ^^^^^
+32 |     object: String,
+   |     ^^^^^^
+   |
+   = note: `JinaResponse` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: field `object` is never read
+  --> src\clients\jina.rs:39:5
+   |
+38 | struct JinaEmbeddingData {
+   |        ----------------- field in this struct
+39 |     object: String,
+   |     ^^^^^^
+   |
+   = note: `JinaEmbeddingData` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: fields `model` and `usage` are never read
+  --> src\clients\jina.rs:62:5
+   |
+61 | struct JinaRerankResponse {
+   |        ------------------ fields in this struct
+62 |     model: String,
+   |     ^^^^^
+63 |     results: Vec<JinaRerankResult>,
+64 |     usage: JinaUsage,
+   |     ^^^^^
+   |
+   = note: `JinaRerankResponse` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: `embeddings` (lib) generated 13 warnings (run `cargo fix --lib -p embeddings` to apply 3 suggestions)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.38s
