@@ -1,13 +1,8 @@
 //! Embedding clients module.
+//!
+//! This module provides embedding clients for generating vector embeddings.
+//! Uses a local ONNX-based model for on-device inference.
 
-pub mod openai;
-pub mod cohere;
-pub mod voyage;
-pub mod jina;
-pub mod huggingface;
+pub mod local;
 
-pub use openai::OpenAIClient;
-pub use cohere::CohereClient;
-pub use voyage::VoyageClient;
-pub use jina::JinaClient;
-pub use huggingface::HuggingFaceClient;
+pub use local::{LocalEmbeddingClient, LocalModelConfig};

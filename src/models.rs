@@ -1,4 +1,6 @@
 //! API models for request/response types.
+//!
+//! Defines the JSON request/response structures for the embeddings API.
 
 use serde::{Deserialize, Serialize};
 
@@ -7,15 +9,9 @@ use serde::{Deserialize, Serialize};
 pub struct EmbedRequest {
     /// The text to embed.
     pub text: String,
-    /// Source type for routing (e.g., "github", "notion", "code").
+    /// Source type hint (e.g., "code", "documentation", "chat").
     #[serde(default)]
     pub source_type: Option<String>,
-    /// Specific provider to use (optional, overrides routing).
-    #[serde(default)]
-    pub provider: Option<String>,
-    /// Specific model to use (optional).
-    #[serde(default)]
-    pub model: Option<String>,
 }
 
 /// Response for a single embedding.
@@ -27,7 +23,7 @@ pub struct EmbedResponse {
     pub dimension: u32,
     /// Model used for embedding.
     pub model: String,
-    /// Provider used.
+    /// Provider used (always "local").
     pub provider: String,
 }
 
@@ -36,15 +32,9 @@ pub struct EmbedResponse {
 pub struct BatchEmbedRequest {
     /// The texts to embed.
     pub texts: Vec<String>,
-    /// Source type for routing.
+    /// Source type hint for routing.
     #[serde(default)]
     pub source_type: Option<String>,
-    /// Specific provider to use.
-    #[serde(default)]
-    pub provider: Option<String>,
-    /// Specific model to use.
-    #[serde(default)]
-    pub model: Option<String>,
 }
 
 /// Response for batch embedding.
@@ -56,7 +46,7 @@ pub struct BatchEmbedResponse {
     pub dimension: u32,
     /// Model used.
     pub model: String,
-    /// Provider used.
+    /// Provider used (always "local").
     pub provider: String,
     /// Number of texts processed.
     pub count: usize,
@@ -67,12 +57,9 @@ pub struct BatchEmbedResponse {
 pub struct EmbedChunksRequest {
     /// The chunks to embed.
     pub chunks: Vec<ChunkInput>,
-    /// Source type for routing.
+    /// Source type hint.
     #[serde(default)]
     pub source_type: Option<String>,
-    /// Specific provider to use.
-    #[serde(default)]
-    pub provider: Option<String>,
 }
 
 /// A chunk of content to embed.
@@ -94,7 +81,7 @@ pub struct EmbedChunksResponse {
     pub chunks: Vec<EmbeddedChunk>,
     /// Model used.
     pub model: String,
-    /// Provider used.
+    /// Provider used (always "local").
     pub provider: String,
 }
 
@@ -109,45 +96,6 @@ pub struct EmbeddedChunk {
     pub dimension: u32,
 }
 
-/// Request for reranking documents.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RerankApiRequest {
-    /// The query to rank documents against.
-    pub query: String,
-    /// The documents to rerank.
-    pub documents: Vec<String>,
-    /// Number of top results to return.
-    #[serde(default = "default_top_n")]
-    pub top_n: usize,
-    /// Optional model to use.
-    #[serde(default)]
-    pub model: Option<String>,
-}
-
-fn default_top_n() -> usize {
-    10
-}
-
-/// Response for reranking.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RerankApiResponse {
-    /// Reranked results.
-    pub results: Vec<RerankResultItem>,
-    /// Model used.
-    pub model: String,
-}
-
-/// A single rerank result.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RerankResultItem {
-    /// Original index in the input.
-    pub index: usize,
-    /// The document text.
-    pub document: String,
-    /// Relevance score (0-1).
-    pub score: f32,
-}
-
 /// Health check response.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct HealthResponse {
@@ -157,8 +105,15 @@ pub struct HealthResponse {
     pub service: String,
     /// Service version.
     pub version: String,
-    /// Available providers.
+    /// Model name.
+    pub model: String,
+    /// Embedding dimension.
+    pub dimension: u32,
+    /// Available providers (always ["local"]).
     pub providers: Vec<ProviderInfo>,
+    /// Cache statistics.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub cache_stats: Option<crate::handlers::CacheStats>,
     /// Available endpoints.
     pub endpoints: Vec<String>,
 }

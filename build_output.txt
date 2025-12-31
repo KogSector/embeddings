@@ -1,0 +1,16 @@
+warning: unused imports: `Deserialize` and `Serialize`
+ --> src\config.rs:5:13
+  |
+5 | use serde::{Deserialize, Serialize};
+  |             ^^^^^^^^^^^  ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `LocalModelConfig`
+  --> src\services\orchestrator.rs:10:44
+   |
+10 | use crate::clients::{LocalEmbeddingClient, LocalModelConfig};
+   |                                            ^^^^^^^^^^^^^^^^
+
+warning: `embeddings` (lib) generated 2 warnings (run `cargo fix --lib -p embeddings` to apply 2 suggestions)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s

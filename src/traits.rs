@@ -1,4 +1,6 @@
 //! Core traits for embedding clients.
+//!
+//! Defines the interface that embedding clients must implement.
 
 use anyhow::Result;
 use async_trait::async_trait;
@@ -9,7 +11,7 @@ use serde::{Deserialize, Serialize};
 pub struct EmbeddingRequest {
     /// The text to embed.
     pub text: String,
-    /// The model to use (provider-specific).
+    /// The model to use (optional, uses default if not specified).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub model: Option<String>,
     /// Optional output dimension (for models that support it).
@@ -71,45 +73,6 @@ pub struct BatchEmbeddingResponse {
     pub usage: Option<TokenUsage>,
 }
 
-/// Rerank request.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RerankRequest {
-    /// The query to rank documents against.
-    pub query: String,
-    /// The documents to rerank.
-    pub documents: Vec<String>,
-    /// Number of top results to return.
-    #[serde(default = "default_top_n")]
-    pub top_n: usize,
-    /// The model to use for reranking.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub model: Option<String>,
-}
-
-fn default_top_n() -> usize {
-    10
-}
-
-/// Rerank response.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RerankResponse {
-    /// Reranked results with scores.
-    pub results: Vec<RerankResult>,
-    /// The model used.
-    pub model: String,
-}
-
-/// A single rerank result.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RerankResult {
-    /// Original index in the input documents.
-    pub index: usize,
-    /// The document text.
-    pub document: String,
-    /// Relevance score.
-    pub relevance_score: f32,
-}
-
 /// Trait for embedding clients that can generate embeddings.
 #[async_trait]
 pub trait EmbeddingClient: Send + Sync {
@@ -128,19 +91,6 @@ pub trait EmbeddingClient: Send + Sync {
     /// Get the default model for this provider.
     fn default_model(&self) -> &str;
 
-    /// Check if the client is properly configured.
-    fn is_available(&self) -> bool;
-}
-
-/// Trait for reranking clients.
-#[async_trait]
-pub trait RerankClient: Send + Sync {
-    /// Rerank documents by relevance to a query.
-    async fn rerank(&self, request: RerankRequest) -> Result<RerankResponse>;
-
-    /// Get the provider name.
-    fn provider_name(&self) -> &str;
-
-    /// Check if reranking is available.
+    /// Check if the client is properly configured and available.
     fn is_available(&self) -> bool;
 }

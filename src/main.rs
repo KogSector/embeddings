@@ -1,6 +1,7 @@
 //! Embeddings Service - Main Entry Point
 //!
-//! A high-performance embedding microservice for RAG pipelines with multi-provider support.
+//! A high-performance embedding microservice using local ONNX models.
+//! No external API dependencies - runs entirely on-device.
 
 use anyhow::Result;
 use axum::{
@@ -32,15 +33,30 @@ async fn main() -> Result<()> {
     dotenvy::dotenv().ok();
     let config = Config::from_env();
 
-    info!("Starting Embeddings Service v{}", env!("CARGO_PKG_VERSION"));
-    info!("Port: {}", config.port);
-    info!("Default provider: {}", config.default_provider);
+    info!("🚀 Starting Embeddings Service v{}", env!("CARGO_PKG_VERSION"));
+    info!("📦 Local Model: {} ({}D)", config.model_name, config.model_dimension);
+    info!("🔧 Port: {}", config.port);
+
+    // Validate model files exist
+    match config.validate_model_files() {
+        Ok(_) => info!("✅ Model files validated"),
+        Err(e) => {
+            tracing::error!("❌ Model files missing: {}", e);
+            tracing::error!("Please download the model files:");
+            tracing::error!("  - Model: {}", config.model_path);
+            tracing::error!("  - Tokenizer: {}", config.tokenizer_path);
+            tracing::error!("");
+            tracing::error!("You can download all-MiniLM-L6-v2 from:");
+            tracing::error!("  https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2");
+            return Err(anyhow::anyhow!(e));
+        }
+    }
 
     // Initialize the embedding orchestrator
     let orchestrator = match EmbeddingOrchestrator::new(&config).await {
         Ok(orch) => {
-            let providers = orch.available_providers();
-            info!("✓ Initialized with {} provider(s): {:?}", providers.len(), providers);
+            info!("✅ Local embedding model initialized");
+            info!("   Cache size: {} entries", config.cache_size);
             Arc::new(orch)
         }
         Err(e) => {
@@ -62,8 +78,6 @@ async fn main() -> Result<()> {
         .route("/embed", post(handlers::embed_single))
         .route("/batch/embed", post(handlers::embed_batch))
         .route("/batch/embed/chunks", post(handlers::embed_chunks))
-        // Reranking
-        .route("/rerank", post(handlers::rerank))
         // State
         .with_state(state)
         // Middleware
